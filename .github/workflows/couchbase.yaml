@@ -1,0 +1,12 @@
+name: couchbase
+on: push
+jobs:
+  localhost:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/poetry-buildpack@main
+        with:
+          tests: tests
+          test-entry-point: python test_couchbase.py
+

@@ -1,1 +1,1 @@
-# py-database
+# pypi davidkhala.database

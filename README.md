@@ -1,1 +1,1 @@
-# pypi davidkhala.database
+# pypi davidkhala.nosql

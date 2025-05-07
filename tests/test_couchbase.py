@@ -5,7 +5,7 @@ from couchbase.options import (QueryOptions)
 from davidkhala.couchbase import Couchbase
 
 
-class CouchbaeTestCase(unittest.TestCase):
+class CouchbaseTestCase(unittest.TestCase):
     couchbase: Couchbase
 
     @classmethod

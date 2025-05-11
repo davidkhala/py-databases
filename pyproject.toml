@@ -6,17 +6,19 @@ authors = [
     { name = "David Liu", email = "david-khala@hotmail.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = "^3.10"
 dependencies = [
-    "pytest>=0.0.0",
 ]
 
 [tool.poetry]
 packages = [{ include = "davidkhala" }]
 
 
+[tool.poetry.group.dev.dependencies]
+pytest = ">=0.0.0"
+
 [project.optional-dependencies]
-couchbase = ["couchbase>=0.0.0"]
+couchbase = ["couchbase>=0.0.0", "davidkhala-utils[http-request] (>=0.0.0)"]
 
 
 [build-system]

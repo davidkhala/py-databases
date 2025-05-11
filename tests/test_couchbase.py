@@ -1,9 +1,17 @@
+import os
 import unittest
 
 from couchbase.options import (QueryOptions)
 
 from davidkhala.couchbase import Couchbase
+from davidkhala.couchbase.capella.organization import Organization
 
+secret = os.getenv("CAPELLA_API_SECRET")
+class CapellaTestCase(unittest.TestCase):
+
+    def test_list_org(self):
+        org = Organization(secret)
+        print(org.list())
 
 class CouchbaseTestCase(unittest.TestCase):
     couchbase: Couchbase

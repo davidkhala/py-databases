@@ -7,11 +7,15 @@ from davidkhala.couchbase import Couchbase
 from davidkhala.couchbase.capella.organization import Organization
 
 secret = os.getenv("CAPELLA_API_SECRET")
+
+
 class CapellaTestCase(unittest.TestCase):
 
     def test_list_org(self):
         org = Organization(secret)
-        print(org.list())
+        organization_id = org.list()[0]['id']
+        print(org.get(organization_id))
+
 
 class CouchbaseTestCase(unittest.TestCase):
     couchbase: Couchbase
@@ -23,7 +27,6 @@ class CouchbaseTestCase(unittest.TestCase):
         cls.cb_coll = cls.couchbase.bucket.scope("inventory").collection("airline")
 
     def test_upsert(self):
-
         def upsert_document(doc):
             """
             upsert document function
@@ -34,7 +37,6 @@ class CouchbaseTestCase(unittest.TestCase):
             key = doc["type"] + "_" + str(doc["id"])
             result = self.cb_coll.upsert(key, doc)
             print(result.cas)
-
 
         airline = {
             "type": "airline",
@@ -49,7 +51,6 @@ class CouchbaseTestCase(unittest.TestCase):
         self.lookup_by_callsign("CBS")
 
     def test_query(self):
-
         def get_airline_by_key(key):
             """
             get document function
@@ -60,7 +61,7 @@ class CouchbaseTestCase(unittest.TestCase):
 
         get_airline_by_key("airline_8091")
 
-    def lookup_by_callsign(self,cs):
+    def lookup_by_callsign(self, cs):
         print("\nLookup Result: ")
 
         inventory_scope = self.couchbase.bucket.scope('inventory')
@@ -71,8 +72,6 @@ class CouchbaseTestCase(unittest.TestCase):
         for row in row_iter:
             self.assertEqual("Couchbase Airways", row)
             print(row)
-
-
 
 
 if __name__ == '__main__':

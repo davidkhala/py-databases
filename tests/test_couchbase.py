@@ -4,6 +4,7 @@ import unittest
 from couchbase.options import (QueryOptions)
 
 from davidkhala.couchbase import Couchbase
+from davidkhala.couchbase.capella.bucket import calculateId
 from davidkhala.couchbase.capella.organization import Organization
 
 secret = os.getenv("CAPELLA_API_SECRET")
@@ -15,6 +16,9 @@ class CapellaTestCase(unittest.TestCase):
         org = Organization(secret)
         organization_id = org.list()[0]['id']
         print(org.get(organization_id))
+
+    def test_dependencies(self):
+        self.assertEqual('dHJhdmVsLXNhbXBsZQ==', calculateId('travel-sample'))
 
 
 class CouchbaseTestCase(unittest.TestCase):

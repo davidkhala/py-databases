@@ -18,7 +18,7 @@ packages = [{ include = "davidkhala" }]
 pytest = ">=0.0.0"
 
 [project.optional-dependencies]
-couchbase = ["couchbase>=0.0.0", "davidkhala-utils[http-request] (>=0.0.0)"]
+couchbase = ["couchbase>=0.0.0", "davidkhala-utils[http-request] (>=0.4.0)"]
 
 
 [build-system]

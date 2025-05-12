@@ -67,13 +67,12 @@ class Cluster:
 
     class Operator(AbstractOperator):
         def __init__(self, api_secret, organization_id, project_id, cluster_id):
-            self._base = f"/{organization_id}/projects/{project_id}/clusters/{cluster_id}"
-            self.api = API(self._base, api_secret)
+            self.data: dict = {}
+            self.api = API(f"/{organization_id}/projects/{project_id}/clusters/{cluster_id}", api_secret)
             self.organization_id = organization_id
             self.project_id = project_id
             self.cluster_id = cluster_id
             self.turnOnLinkedAppService = True
-            self.data: dict
 
         @property
         def domain(self):
@@ -89,15 +88,37 @@ class Cluster:
             return AppService.Operator(self.api.secret, self.organization_id, self.project_id, self.cluster_id,
                                        self.appService)
 
-        def set_route(self, route):
-            self.api.set_route(self._base + route)
+        def start(self):
+            self.api.post('/activationState', json={'turnOnLinkedAppService': self.turnOnLinkedAppService})
+
+        def stop(self):
+            self.api.delete('/activationState')
+
+        def get(self):
+            self.data = self.api.get()
+            return self.data
+
+
+class AppService:
+    def __init__(self, api_secret, organization_id):
+        self.api = API(f"{organization_id}/appservices", api_secret)
+
+    def list(self):
+        return self.api.get()['data']
+
+    class Operator(AbstractOperator):
+
+        def __init__(self, api_secret, organization_id, project_id, cluster_id, appservice_id):
+            self.api = API(
+                f"/{organization_id}/projects/${project_id}/clusters/${cluster_id}/appservices/${appservice_id}",
+                api_secret)
+            self.data: dict = {}
+
+        def stop(self):
+            self.api.delete('/activationState')
+
+        def get(self):
+            self.data = self.api.get('')
 
         def start(self):
-            self.set_route('/activationState')
-            self.api.post({
-                'turnOnLinkedAppService': self.turnOnLinkedAppService
-            })
-        def stop(self):
-            self.set_route('/activationState')
-            # TODO
-            self.api.delete()
+            self.api.post('/activationState')

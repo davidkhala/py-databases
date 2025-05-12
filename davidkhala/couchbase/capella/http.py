@@ -3,14 +3,21 @@ from davidkhala.http_request import Request
 BaseURL = 'https://cloudapi.cloud.couchbase.com/v4/organizations'
 
 
-class API(Request):
-    def __init__(self, route, api_secret):
-        super().__init__(BaseURL + route, {
+class API:
+    def __init__(self, group, api_secret):
+        self.api = Request({
             'bearer': api_secret
         })
+        self.url = BaseURL + group
 
         self.secret = api_secret
 
-    def set_route(self, route):
-        self.url = BaseURL + route
+    def get(self, route = '', **kwargs):
+        self.api.request(self.url + route, 'GET', **kwargs)
+
+    def post(self, route= '', **kwargs):
+        self.api.request(self.url + route, 'POST', **kwargs)
+
+    def delete(self, route= '', **kwargs):
+        self.api.request(self.url + route, 'DELETE', **kwargs)
 

@@ -9,7 +9,6 @@ class Organization:
         return self.api.get()['data']
 
     def get(self, organization_id):
-        self.api.set_route(f"/{organization_id}")
-        return self.api.get()
+        return self.api.get(f"/{organization_id}")
 
 

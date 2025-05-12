@@ -13,7 +13,7 @@ class API:
         self.secret = api_secret
 
     def get(self, route = '', **kwargs):
-        self.api.request(self.url + route, 'GET', **kwargs)
+        return self.api.request(self.url + route, 'GET', **kwargs)
 
     def post(self, route= '', **kwargs):
         self.api.request(self.url + route, 'POST', **kwargs)

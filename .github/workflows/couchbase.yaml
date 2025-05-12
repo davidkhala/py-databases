@@ -1,8 +1,12 @@
 name: couchbase
 on: push
 jobs:
-  localhost:
+  capella-trial:
     runs-on: ubuntu-latest
+    environment: capella-trial
+    env:
+      ADMINISTRATOR_PASSWORD: ${{secrets.ADMINISTRATOR_PASSWORD}}
+      API_SECRET: ${{secrets.API_SECRET}}
     steps:
       - uses: actions/checkout@main
       - uses: davidkhala/poetry-buildpack@main

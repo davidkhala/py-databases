@@ -1,34 +1,45 @@
 import os
 import unittest
 
+from couchbase.collection import Collection
 from couchbase.options import (QueryOptions)
 
 from davidkhala.couchbase import Couchbase
-from davidkhala.couchbase.capella.bucket import calculateId
+from davidkhala.couchbase.capella.bucket import calculateId, Sample
+from davidkhala.couchbase.capella.cluster import Cluster
 from davidkhala.couchbase.capella.organization import Organization
+from davidkhala.couchbase.capella.project import Project
 
-secret = os.getenv("CAPELLA_API_SECRET")
+secret = os.getenv("API_SECRET")
+password = os.getenv("ADMINISTRATOR_PASSWORD")
 
 
 class CapellaTestCase(unittest.TestCase):
-
-    def test_list_org(self):
-        org = Organization(secret)
-        organization_id = org.list()[0]['id']
-        print(org.get(organization_id))
-
-    def test_dependencies(self):
-        self.assertEqual('dHJhdmVsLXNhbXBsZQ==', calculateId('travel-sample'))
-
-
-class CouchbaseTestCase(unittest.TestCase):
+    organization_id: str
+    project_id: str
+    cluster_id: str
+    domain: str
     couchbase: Couchbase
+    collection: Collection
 
     @classmethod
     def setUpClass(cls):
-        cls.couchbase = Couchbase('couchbase', tls=False)
+        org = Organization(secret)
+        cls.organization_id = org.list()[0]['id']
+        project = Project(secret, cls.organization_id)
+        cls.project_id = project.list()[0]['id']
+        cluster = Cluster(secret, cls.organization_id, cls.project_id)
+        cls.cluster_id = cluster.list()[0]['id']
+        operator = Cluster.Operator(secret, cls.organization_id, cls.project_id, cls.cluster_id)
+        operator.ensure_started()
+        sample = Sample(secret, cls.organization_id, cls.project_id, cls.cluster_id)
+        list(sample.preset())
+        cls.couchbase = Couchbase(password, domain=operator.domain)
         cls.couchbase.connect('travel-sample')
-        cls.cb_coll = cls.couchbase.bucket.scope("inventory").collection("airline")
+        cls.collection = cls.couchbase.bucket.scope("inventory").collection("airline")
+
+    def test_dependencies(self):
+        self.assertEqual('dHJhdmVsLXNhbXBsZQ==', calculateId('travel-sample'))
 
     def test_upsert(self):
         def upsert_document(doc):
@@ -39,7 +50,7 @@ class CouchbaseTestCase(unittest.TestCase):
 
             # key will equal: "airline_8091"
             key = doc["type"] + "_" + str(doc["id"])
-            result = self.cb_coll.upsert(key, doc)
+            result = self.collection.upsert(key, doc)
             print(result.cas)
 
         airline = {
@@ -60,7 +71,7 @@ class CouchbaseTestCase(unittest.TestCase):
             get document function
             """
             print("\nGet Result: ")
-            result = self.cb_coll.get(key)
+            result = self.collection.get(key)
             print(result.content_as[str])
 
         get_airline_by_key("airline_8091")

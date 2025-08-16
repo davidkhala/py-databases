@@ -1,4 +1,4 @@
-name: couchbase
+name: database
 on: push
 jobs:
   capella-trial:
@@ -9,8 +9,17 @@ jobs:
       API_SECRET: ${{secrets.API_SECRET}}
     steps:
       - uses: actions/checkout@main
-      - uses: davidkhala/poetry-buildpack@main
+      - uses: davidkhala/uv-buildpack@main
         with:
           tests: tests
           test-entry-point: python test_couchbase.py
-
+          extras: couchbase
+  duck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          tests: tests
+          test-entry-point: python test_duckdb.py
+          extras: duck

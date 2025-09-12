@@ -13,7 +13,7 @@ couchbase = [
     "davidkhala-utils[http-request]",
 ]
 duck = ["duckdb"]
-
+milvus = ["pymilvus[model]", "hf_xet"]
 [dependency-groups]
 dev = ["pytest", "seaborn", "matplotlib"]
 

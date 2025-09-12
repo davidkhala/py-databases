@@ -23,3 +23,13 @@ jobs:
           tests: tests
           test-entry-point: python test_duckdb.py
           extras: duck
+  milvus:
+    runs-on: ubuntu-latest
+    environment: milvus
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          tests: tests
+          test-entry-point: pytest milvus
+          extras: milvus

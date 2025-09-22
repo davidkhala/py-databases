@@ -33,3 +33,12 @@ jobs:
           tests: tests
           test-entry-point: pytest milvus
           extras: milvus
+  sql:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          tests: tests
+          test-entry-point: pytest test_sql.py
+          extras: mysql

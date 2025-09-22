@@ -13,9 +13,10 @@ couchbase = [
     "davidkhala-utils[http-request]",
 ]
 duck = ["duckdb"]
-milvus = ["pymilvus[model]", "hf_xet"]
+milvus = ["pymilvus[model,milvus_lite]", "hf_xet"]
+mysql = ["sqlalchemy","mysqlclient"]
 [dependency-groups]
-dev = ["pytest", "seaborn", "matplotlib"]
+dev = ["pytest", "seaborn", "matplotlib", "testcontainers[mysql]"]
 
 [tool.hatch.build.targets.sdist]
 include = ["davidkhala"]

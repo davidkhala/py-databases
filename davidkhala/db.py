@@ -20,8 +20,12 @@ class Connectable(ABC):
     def connect_string(
             dialect: str, domain: str,
             *,
-            driver: Optional[str], port: Optional[Union[str, int]], username: Optional[str], password: Optional[str],
-            name: Optional[str], queries: Optional[dict]
+            driver: Optional[str]=None,
+            port: Optional[Union[str, int]]=3306,
+            username: Optional[str],
+            password: Optional[str],
+            name: Optional[str]=None,
+            queries: Optional[dict]= None
     ):
 
         auth = ''

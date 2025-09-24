@@ -1,11 +1,10 @@
 import os
 import unittest
-from time import sleep
 
-from davidkhala.db import Connectable
 from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
 from testcontainers.mysql import MySqlContainer
 
+from davidkhala.db import Connectable
 from davidkhala.mysql import Mysql
 
 

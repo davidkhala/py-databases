@@ -1,6 +1,6 @@
 from davidkhala.sql import SQL
 import importlib.util
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, parse_qsl
 
 # dependency: (driver, module)
 MYSQL_DRIVERS = {
@@ -32,9 +32,15 @@ def rewrite_connection_string(connection_string: str):
         dialect = dialect_driver
 
     new_driver = detect_installed_driver()
-    new_scheme = f"{dialect}+{new_driver}"
 
-    new_url = parsed._replace(scheme=new_scheme)
+    query = dict(parse_qsl(parsed.query))
+    if 'ssl-mode' in query:
+        query['ssl_mode'] = query.pop('ssl-mode')
+
+    new_url = parsed._replace(
+        scheme=f"{dialect}+{new_driver}",
+        query=urlencode(query)
+    )
     return urlunparse(new_url)
 
 

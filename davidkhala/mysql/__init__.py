@@ -22,7 +22,7 @@ def detect_installed_driver():
     raise RuntimeError("No supported MySQL driver found in current venv.")
 
 
-def rewrite_connection_string(connection_string: str):
+def rewrite_connection_string(connection_string: str)->str:
     parsed = urlparse(connection_string)
     dialect_driver = parsed.scheme
 
@@ -41,7 +41,7 @@ def rewrite_connection_string(connection_string: str):
         scheme=f"{dialect}+{new_driver}",
         query=urlencode(query)
     )
-    return urlunparse(new_url)
+    return str(urlunparse(new_url))
 
 
 class Mysql(SQL):

@@ -1,6 +1,6 @@
 [project]
 name = "davidkhala.databases"
-version = "0.0.0"
+version = "0.0.1"
 description = ""
 authors = [{ name = "David Liu", email = "david-khala@hotmail.com" }]
 requires-python = ">=3.10"
@@ -14,9 +14,9 @@ couchbase = [
 ]
 duck = ["duckdb"]
 milvus = ["pymilvus[model,milvus_lite]", "hf_xet"]
-mysql = ["sqlalchemy","mysqlclient"]
+mysql = ["sqlalchemy",]
 [dependency-groups]
-dev = ["pytest", "seaborn", "matplotlib", "testcontainers[mysql]"]
+dev = ["pytest", "seaborn", "matplotlib", "testcontainers[mysql]", "mysqlclient"]
 
 [tool.hatch.build.targets.sdist]
 include = ["davidkhala"]

@@ -23,11 +23,12 @@ class MysqlTestCase(unittest.TestCase):
                 port=self.container.get_exposed_port(3306),
             ))
         else:
-            connection_string =self.container.get_connection_url()
+            connection_string = self.container.get_connection_url()
             print('connection_string', connection_string)
             self.mysql = Mysql(connection_string)
 
     def test_connect(self):
+        self.assertEqual(Connectable.parse(self.mysql.connection_string)["driver"], "mysqldb")
         self.mysql.connect()
         self.mysql.disconnect()
 

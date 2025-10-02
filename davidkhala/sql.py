@@ -6,10 +6,10 @@ from davidkhala.db import Connectable
 
 
 class SQL(Connectable):
-    def __init__(self, connect_string: str):
+    def __init__(self, connection_string: str):
         super().__init__()
-        self.connect_string = connect_string
-        self.client: Engine = create_engine(connect_string)
+        self.connection_string = connection_string
+        self.client: Engine = create_engine(connection_string)
 
     def connect(self):
         self.connection = self.client.connect()

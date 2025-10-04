@@ -1,4 +1,4 @@
-from davidkhala.sql import SQL
+from davidkhala.data.base.sql import SQL
 import importlib.util
 from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 

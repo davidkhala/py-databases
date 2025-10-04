@@ -1,4 +1,4 @@
-from davidkhala.couchbase.capella.http import API
+from davidkhala.data.base.couchbase.capella.http import API
 
 
 class Organization:

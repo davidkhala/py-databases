@@ -1,7 +1,7 @@
 import time
 from abc import abstractmethod
 
-from davidkhala.couchbase.capella.http import API
+from davidkhala.data.base.couchbase.capella.http import API
 
 Status = {
     'stopped': 'turnedOff',

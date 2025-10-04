@@ -1,8 +1,8 @@
 import base64
 import time
 
-from davidkhala.couchbase.capella.cluster import Cluster, Status
-from davidkhala.couchbase.capella.http import API
+from davidkhala.data.base.couchbase.capella.cluster import Cluster, Status
+from davidkhala.data.base.couchbase.capella.http import API
 
 
 def calculateId(name: str) -> str:

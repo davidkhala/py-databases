@@ -4,11 +4,11 @@ import unittest
 from couchbase.collection import Collection
 from couchbase.options import (QueryOptions)
 
-from davidkhala.couchbase import Couchbase
-from davidkhala.couchbase.capella.bucket import calculateId, Sample
-from davidkhala.couchbase.capella.cluster import Cluster
-from davidkhala.couchbase.capella.organization import Organization
-from davidkhala.couchbase.capella.project import Project
+from davidkhala.data.base.couchbase import Couchbase
+from davidkhala.data.base.couchbase.capella.bucket import calculateId, Sample
+from davidkhala.data.base.couchbase.capella.cluster import Cluster
+from davidkhala.data.base.couchbase.capella.organization import Organization
+from davidkhala.data.base.couchbase.capella.project import Project
 
 secret = os.getenv("API_SECRET")
 password = os.getenv("ADMINISTRATOR_PASSWORD")

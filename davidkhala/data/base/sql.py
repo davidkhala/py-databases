@@ -2,7 +2,7 @@ from typing import Optional, Dict, Any
 
 from sqlalchemy import create_engine, text, Engine
 
-from davidkhala.db import Connectable
+from davidkhala.data.base.common import Connectable
 
 
 class SQL(Connectable):

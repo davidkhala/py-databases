@@ -4,8 +4,8 @@ import unittest
 from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
 from testcontainers.mysql import MySqlContainer
 
-from davidkhala.db import Connectable
-from davidkhala.mysql import Mysql
+from davidkhala.data.base.common import Connectable
+from davidkhala.data.base.mysql import Mysql
 
 
 class MysqlTestCase(unittest.TestCase):

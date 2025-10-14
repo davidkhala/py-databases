@@ -27,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: milvus
     steps:
+      - run: curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
+      - run: bash standalone_embed.sh start
       - uses: actions/checkout@main
       - uses: davidkhala/uv-buildpack@main
         with:

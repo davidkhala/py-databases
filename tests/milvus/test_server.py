@@ -7,7 +7,7 @@ from davidkhala.data.base.milvus import Client, dimension_of
 class LocalhostTestCase(unittest.TestCase):
     def setUp(self):
         self.client = Client(MilvusClient())
-    def test_connect(self):
+    def test_collections(self):
         c_name = 'test'
         self.client.create_collection(c_name)
         collections = self.client.list_collections()
@@ -15,6 +15,7 @@ class LocalhostTestCase(unittest.TestCase):
         print(collections)
     def test_drop_collection(self):
         self.client.client.drop_collection("embedding_collection")
+        self.client.client.create_schema()
     def test_global_connect_context(self):
         from pymilvus import connections, model, FieldSchema, DataType, Collection, CollectionSchema
         connections.connect(host='localhost', port=19530)

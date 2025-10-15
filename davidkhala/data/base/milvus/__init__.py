@@ -1,6 +1,7 @@
 from typing import TypedDict, Optional
 
-from pymilvus import MilvusClient, model
+import pandas as pd
+from pymilvus import MilvusClient, model, CollectionSchema
 
 
 class Field(TypedDict):
@@ -32,6 +33,11 @@ class Collection(TypedDict):
 def dimension_of(c: Collection):
     return c['fields'][1]['params']['dim']
 
+def empty_schema(**kwargs)-> CollectionSchema:
+    kwargs["check_fields"] = False  # do not check fields for now
+    kwargs["auto_id"] = False
+    kwargs["enable_dynamic_field"] = True # no schema enforce
+    return CollectionSchema([], **kwargs)
 
 class Client:
     def __init__(self, client: MilvusClient):
@@ -53,3 +59,5 @@ class Client:
 
     def list_collections(self) -> list[str]:
         return self.client.list_collections()
+    def insert_dataframe(self, collection_name:str, df: pd.DataFrame):
+        self.client.insert(collection_name, df.to_dict(orient="records"))

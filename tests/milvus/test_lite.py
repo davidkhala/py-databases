@@ -1,7 +1,10 @@
 import platform
 import unittest
 
-from pymilvus import MilvusClient, model
+from pymilvus import MilvusClient, model, CollectionSchema, DataType
+from pymilvus.exceptions import PrimaryKeyException
+
+from davidkhala.data.base.milvus import empty_schema
 
 
 class HeadlessTestCase(unittest.TestCase):
@@ -18,8 +21,16 @@ class HeadlessTestCase(unittest.TestCase):
         vectors = embedding_fn.encode_documents(docs)
 
         self.assertEqual(embedding_fn.dim, len(vectors[0]))
-
-
+    def test_schema(self):
+        with self.assertRaises(PrimaryKeyException) as e:
+            CollectionSchema([])
+        self.assertEqual('Schema must have a primary key field.', e.exception.message)
+        empty_schema()
+        empty_schema('id', DataType.INT64)
+        empty_schema('uid', DataType.VARCHAR)
+        with self.assertRaises(PrimaryKeyException) as e:
+            empty_schema('-', DataType.STRING)
+        self.assertEqual('Primary key type must be DataType.INT64 or DataType.VARCHAR.', e.exception.message)
 class LiteTestCase(unittest.TestCase):
     """https://milvus.io/docs/quickstart.md#Set-Up-Vector-Database"""
 

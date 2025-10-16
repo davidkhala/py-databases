@@ -26,10 +26,15 @@ jobs:
   milvus:
     runs-on: ubuntu-latest
     environment: milvus
+    env:
+      CLUSTER_ENDPOINT: ${{vars.CLUSTER_ENDPOINT}}
+      CLUSTER_TOKEN: ${{secrets.CLUSTER_TOKEN}}
     steps:
-      - run: curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
-      - run: bash standalone_embed.sh start
       - uses: actions/checkout@main
+      - run: |
+          cd ${{ github.workspace }}/../
+          curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
+          bash standalone_embed.sh start
       - uses: davidkhala/uv-buildpack@main
         with:
           tests: tests

@@ -1,4 +1,4 @@
-from davidkhala.http_request import Request
+from davidkhala.utils.http_request import Request
 
 BaseURL = 'https://cloudapi.cloud.couchbase.com/v4/organizations'
 

@@ -1,7 +1,9 @@
 import os
 import unittest
-from pymilvus import MilvusClient
-from davidkhala.data.base.milvus import Client, dimension_of
+
+from pymilvus import MilvusClient, MilvusException
+
+from davidkhala.data.base.milvus import Client, dimension_of, empty_schema
 
 
 class LocalhostTestCase(unittest.TestCase):
@@ -69,8 +71,20 @@ class ZillizTestCase(unittest.TestCase):
             client.drop_collection(collection_name)
         self.client.create_collection(collection_name)
         c = self.client.get_collection(collection_name)
-
         self.assertEqual(768, dimension_of(c))
+        print(c)
+
+    def test_create_schema_collection(self):
+        client = self.client.client
+        collection_name = "collection"
+        if client.has_collection(collection_name):
+            client.drop_collection(collection_name)
+        #
+        schema = empty_schema()
+        with self.assertRaises(MilvusException) as e:
+            self.client.create_collection(collection_name, schema=schema)
+        self.assertEqual('schema does not contain vector field: invalid parameter', e.exception.message)
+
 
     def tearDown(self):
         self.client.disconnect()

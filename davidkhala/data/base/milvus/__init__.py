@@ -1,42 +1,8 @@
 from typing import TypedDict, Optional, Literal
 
 import pandas as pd
+from davidkhala.data.base.milvus.collection import CollectionDict, Collection
 from pymilvus import MilvusClient, model, CollectionSchema, FieldSchema, DataType
-
-
-class Field(TypedDict):
-    field_id: int
-    name: str
-    description: str
-    type: type
-    params: dict
-    is_primary: Optional[bool]
-    functions: list
-    aliases: list
-    collection_id: int
-    consistency_level: int
-    properties: dict
-    num_partitions: int
-    enable_dynamic_field: bool
-    created_timestamp: int
-    update_timestamp: int
-
-
-class Collection(TypedDict):
-    collection_name: str
-    auto_id: bool
-    num_shards: int
-    description: str
-    fields: list[Field]
-
-def vector_field_of(c:Collection):
-    v = next((f for f in c['fields'] if f['type'] in [DataType.FLOAT_VECTOR, DataType.BINARY_VECTOR]), None)
-    assert v is not None
-    return v
-
-def dimension_of(c: Collection):
-    v = vector_field_of(c)
-    return v['params']['dim']
 
 
 def empty_schema(index_column='id', index_type: Literal[DataType.INT64, DataType.VARCHAR] = DataType.INT64,
@@ -53,7 +19,7 @@ class Client:
         self.embedding_fn = model.DefaultEmbeddingFunction()  # small embedding model "paraphrase-albert-small-v2"
 
     def get_collection(self, collection_name: str) -> Collection:
-        return self.client.describe_collection(collection_name)
+        return Collection(self.client.describe_collection(collection_name))
 
     def disconnect(self):
         self.client.close()

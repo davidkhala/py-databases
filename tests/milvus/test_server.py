@@ -2,8 +2,10 @@ import os
 import unittest
 
 from pymilvus import MilvusClient, MilvusException
+from pymilvus.client.types import MetricType
 
 from davidkhala.data.base.milvus import Client, empty_schema
+from davidkhala.data.base.milvus.inline import create_index
 
 
 class LocalhostTestCase(unittest.TestCase):
@@ -61,19 +63,16 @@ class LocalhostTestCase(unittest.TestCase):
 
         if not collection.has_index(index_name='vector'):
             ## For query optimize
-            collection.create_index(field_name="vector",
-                                    index_params={"index_type": "IVF_FLAT",
-                                                  "metric_type": "COSINE", # TODO is a must
-                                                  "params": {"nlist": 128}})
+            create_index(collection, "vector", metric_type=MetricType.IP)
             collection.load()
 
         results = collection.search(
             data=embedding_fn.encode_documents(['what happened in 1956']),
             anns_field='vector',
-            param={"metric_type": "COSINE"}, # TODO should match index
+            param={"metric_type": "COSINE"},
             limit=2
         )
-        # TODO 如果你使用的是 COSINE 或 IP，建议对向量进行归一化处理。model.DefaultEmbeddingFunction()已经是归一化了的
+
         best_hit = max(results[0], key=lambda x: x.distance)  # 如果是 IP 或 COSINE，相似度越高越好
         print(best_hit)
 

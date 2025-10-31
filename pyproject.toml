@@ -14,7 +14,8 @@ couchbase = [
 ]
 duck = ["duckdb"]
 milvus = ["pymilvus[model, milvus_lite]", "hf_xet"]
-mysql = ["sqlalchemy",]
+mysql = ["sqlalchemy"]
+maria = ["sqlalchemy", "mariadb"]
 [dependency-groups]
 dev = ["pytest", "seaborn", "matplotlib", "testcontainers[mysql]", "mysqlclient", "davidkhala-utils[geo]"]
 

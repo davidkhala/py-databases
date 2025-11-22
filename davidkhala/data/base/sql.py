@@ -1,6 +1,6 @@
 from typing import Optional, Dict, Any
 
-from sqlalchemy import create_engine, text, Engine
+from sqlalchemy import create_engine, text, Engine, CursorResult
 
 from davidkhala.data.base.common import Connectable
 
@@ -8,6 +8,7 @@ from davidkhala.data.base.common import Connectable
 class SQL(Connectable):
     def __init__(self, connection_string: str):
         super().__init__()
+        self.connection = None
         self.connection_string = connection_string
         self.client: Engine = create_engine(connection_string)
 
@@ -17,6 +18,11 @@ class SQL(Connectable):
     def disconnect(self):
         self.connection.close()
 
-    def query(self, template: str, values: Optional[Dict[str, Any]] = None,
-                    request_options: Optional[Dict[str, Any]] = None):
+    def query(self,
+              template: str,
+              values: Optional[Dict[str, Any]] = None,
+              request_options: Optional[Dict[str, Any]] = None
+              ) -> CursorResult[Any]:
         return self.connection.execute(text(template), values, execution_options=request_options)
+    @staticmethod
+    def rows_to_dicts(result:CursorResult): return result.mappings().all()

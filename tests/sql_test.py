@@ -1,12 +1,16 @@
 import os
 import unittest
 
+from sqlalchemy.orm import Session
 from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
 from testcontainers.mysql import MySqlContainer
 from testcontainers.postgres import PostgresContainer
 from davidkhala.data.base.common import Connectable
+from davidkhala.data.base.sql import ORM
 from davidkhala.data.base.mysql import Mysql
 from davidkhala.data.base.pg import Postgres
+from davidkhala.data.base.pg.dba import DBA
+
 import socket
 
 
@@ -60,11 +64,16 @@ class PostgresTestCase(unittest.TestCase):
         self.pg.disconnect()
 
     def test_databases(self):
-        from davidkhala.data.base.pg.dba import DBA
         self.pg.connect()
         dba = DBA(self.pg)
         self.assertListEqual(['postgres', 'test'], dba.databases)
         self.pg.disconnect()
+    def test_tx(self):
+        self.pg.connect()
+        with Session(self.pg.client) as session:
+            session.commit()
+        self.pg.disconnect()
+
 
     def tearDown(self):
         self.container.stop()

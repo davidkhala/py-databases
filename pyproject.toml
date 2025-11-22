@@ -14,10 +14,11 @@ couchbase = [
 ]
 duck = ["duckdb"]
 milvus = ["pymilvus[model, milvus_lite]", "hf_xet"]
-mysql = ["sqlalchemy"]
+mysql = ["sqlalchemy", "mysqlclient"]
+pg = ["sqlalchemy", "psycopg2"]
 maria = ["sqlalchemy", "mariadb"]
 [dependency-groups]
-dev = ["pytest", "seaborn", "matplotlib", "testcontainers[mysql]", "mysqlclient", "davidkhala-utils[geo]"]
+dev = ["pytest", "seaborn", "matplotlib", "testcontainers[mysql, postgres]"]
 
 [tool.hatch.build.targets.sdist]
 include = ["davidkhala"]

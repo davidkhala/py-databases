@@ -12,7 +12,7 @@ jobs:
       - uses: davidkhala/uv-buildpack@main
         with:
           tests: tests
-          test-entry-point: python test_couchbase.py
+          test-entry-point: python couchbase_test.py
           extras: couchbase
   duck:
     runs-on: ubuntu-latest
@@ -21,7 +21,7 @@ jobs:
       - uses: davidkhala/uv-buildpack@main
         with:
           tests: tests
-          test-entry-point: python test_duckdb.py
+          test-entry-point: python duckdb_test.py
           extras: duck
   milvus:
     runs-on: ubuntu-latest
@@ -47,5 +47,5 @@ jobs:
       - uses: davidkhala/uv-buildpack@main
         with:
           tests: tests
-          test-entry-point: pytest test_sql.py
-          extras: mysql
+          test-entry-point: pytest sql_test.py
+          extras: mysql pg

@@ -59,7 +59,7 @@ class Connectable(ABC):
 
         name = o.path.lstrip('/')
 
-        # 提取参数
+        # extract params
         options = {k: v[0] for k, v in parse_qs(o.query).items()}
 
         return {

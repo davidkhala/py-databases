@@ -1,5 +1,8 @@
 name: database
-on: push
+on:
+  push:
+  workflow_dispatch:
+
 jobs:
   capella-trial:
     runs-on: ubuntu-latest

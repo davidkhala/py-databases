@@ -91,7 +91,7 @@ class ZillizTestCase(unittest.TestCase):
             client.drop_collection(collection_name)
         self.client.create_collection(collection_name)
         c = self.client.get_collection(collection_name)
-        self.assertEqual(768, c.dimensions)
+        self.assertIn(768, c.dimensions)
         print(c)
 
     def test_create_schema_collection(self):

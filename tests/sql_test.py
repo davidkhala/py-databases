@@ -59,6 +59,13 @@ class PostgresTestCase(unittest.TestCase):
         self.pg.connect()
         self.pg.disconnect()
 
+    def test_databases(self):
+        from davidkhala.data.base.pg.dba import DBA
+        self.pg.connect()
+        dba = DBA(self.pg)
+        self.assertListEqual(['postgres', 'test'], dba.databases)
+        self.pg.disconnect()
+
     def tearDown(self):
         self.container.stop()
 

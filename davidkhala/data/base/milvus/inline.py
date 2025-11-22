@@ -1,5 +1,20 @@
+from typing import Optional, Dict, Any
+
 from pymilvus import Collection
 from pymilvus.client.types import MetricType, IndexType
+
+from davidkhala.data.base.milvus.format import default_index_name
+
+
+def get_index(collection: Collection, index_name: str) -> Optional[Dict[str, Any]]:
+    return next(
+        (
+            idx.to_dict()
+            for idx in collection.indexes
+            if idx.index_name == index_name
+        ),
+        None,  # if not found
+    )
 
 
 def drop_index(collection: Collection, index_name: str):
@@ -15,9 +30,21 @@ def create_index(collection: Collection, field_name: str, metric_type: MetricTyp
                  ):
     collection.create_index(
         field_name=field_name,
-        index_name=index_name or f"{field_name}_idx",
+        index_name=index_name or default_index_name(field_name),
         index_params={
             "index_type": index_type.name,
             "metric_type": metric_type.name,  # mandatory
             "params": {"nlist": clusters}  # mandatory
         })
+
+
+def search(collection: Collection, *, vector, field_name: str, limit: int, param: dict = None):
+    if not param:
+        metric_type = get_index(collection, default_index_name(field_name))['index_param']['metric_type']
+        param = {"metric_type": metric_type}
+    return collection.search(
+        data=vector,
+        anns_field=field_name,
+        param=param,
+        limit=limit
+    )

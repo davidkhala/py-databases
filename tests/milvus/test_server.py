@@ -2,10 +2,12 @@ import os
 import unittest
 
 from pymilvus import MilvusClient, MilvusException
+from pymilvus import connections, model, FieldSchema, DataType, Collection, CollectionSchema, has_collection
 from pymilvus.client.types import MetricType
 
 from davidkhala.data.base.milvus import Client, empty_schema
-from davidkhala.data.base.milvus.inline import create_index
+from davidkhala.data.base.milvus.inline import create_index, get_index, search
+from davidkhala.data.base.milvus.format import default_index_name
 
 
 class LocalhostTestCase(unittest.TestCase):
@@ -24,7 +26,7 @@ class LocalhostTestCase(unittest.TestCase):
         self.client.client.create_schema()
 
     def test_global_connect_context(self):
-        from pymilvus import connections, model, FieldSchema, DataType, Collection, CollectionSchema, has_collection
+
         connections.connect(host='localhost', port=19530)
         embedding_fn = model.DefaultEmbeddingFunction()
 
@@ -66,16 +68,22 @@ class LocalhostTestCase(unittest.TestCase):
             create_index(collection, "vector", metric_type=MetricType.IP)
             collection.load()
 
-        results = collection.search(
-            data=embedding_fn.encode_documents(['what happened in 1956']),
-            anns_field='vector',
-            param={"metric_type": "COSINE"},
+        results = search(collection,
+            vector=embedding_fn.encode_documents(['what happened in 1956']),
+            field_name='vector',
             limit=2
         )
 
         best_hit = max(results[0], key=lambda x: x.distance)  # 如果是 IP 或 COSINE，相似度越高越好
         print(best_hit)
-
+    def test_get_index(self):
+        connections.connect(host='localhost', port=19530)
+        field = 'vector'
+        collection_name ="embedding_collection"
+        if has_collection(collection_name):
+            collection = Collection(name=collection_name)
+            r = get_index(collection, default_index_name(field) )
+            print(r)
 
 class ZillizTestCase(unittest.TestCase):
     def setUp(self):

@@ -12,3 +12,6 @@ def normalize_vector(vec:Union[np.ndarray, list]) -> np.ndarray:
     if norm == 0:
         raise ValueError("输入向量的模长为 0，无法归一化")
     return vec / norm
+
+
+default_index_name = lambda field_name: f"{field_name}_idx"

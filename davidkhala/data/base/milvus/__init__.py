@@ -1,4 +1,4 @@
-from typing import TypedDict, Optional, Literal
+from typing import Literal
 
 import pandas as pd
 from davidkhala.data.base.milvus.collection import CollectionDict, Collection

@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Union, Optional, Any
+from typing import Union, Any
 from urllib.parse import urlparse, parse_qs
 
 class Connectable(ABC):
@@ -20,12 +20,12 @@ class Connectable(ABC):
     def connect_string(
             dialect: str, domain: str,
             *,
-            driver: Optional[str]=None,
-            port: Optional[Union[str, int]]=3306,
-            username: Optional[str],
-            password: Optional[str],
-            name: Optional[str]=None,
-            queries: Optional[dict]= None
+            driver: str|None=None,
+            port: Union[str, int]|None,
+            username: str|None,
+            password: str|None,
+            name: str|None=None,
+            queries: dict|None= None
     ):
 
         auth = ''

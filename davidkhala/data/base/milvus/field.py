@@ -1,4 +1,4 @@
-from typing import TypedDict, Optional
+from typing import TypedDict
 
 
 class FieldDict(TypedDict):
@@ -7,7 +7,7 @@ class FieldDict(TypedDict):
     description: str
     type: type
     params: dict
-    is_primary: Optional[bool]
+    is_primary: bool
     functions: list
     aliases: list
     collection_id: int

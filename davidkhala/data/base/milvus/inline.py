@@ -1,12 +1,11 @@
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 
+from davidkhala.data.base.milvus.format import default_index_name
 from pymilvus import Collection
 from pymilvus.client.types import MetricType, IndexType
 
-from davidkhala.data.base.milvus.format import default_index_name
 
-
-def get_index(collection: Collection, index_name: str) -> Optional[Dict[str, Any]]:
+def get_index(collection: Collection, index_name: str) -> Dict[str, Any]|None:
     return next(
         (
             idx.to_dict()

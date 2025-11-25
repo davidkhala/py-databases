@@ -6,7 +6,6 @@ from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
 from testcontainers.mysql import MySqlContainer
 from testcontainers.postgres import PostgresContainer
 from davidkhala.data.base.common import Connectable
-from davidkhala.data.base.sql import ORM
 from davidkhala.data.base.mysql import Mysql
 from davidkhala.data.base.pg import Postgres
 from davidkhala.data.base.pg.dba import DBA

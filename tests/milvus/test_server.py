@@ -114,7 +114,7 @@ class ZillizTestCase(unittest.TestCase):
         self.assertEqual('schema does not contain vector field: invalid parameter', e.exception.message)
 
     def tearDown(self):
-        self.client.disconnect()
+        self.client.close()
 
 
 if __name__ == '__main__':

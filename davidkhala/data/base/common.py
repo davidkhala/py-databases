@@ -12,9 +12,8 @@ class Connectable(ABC):
     def connect(self):
         ...
 
-    @abstractmethod
     def close(self):
-        ...
+        self.connection.close()
 
     def __enter__(self):
         self.connect()

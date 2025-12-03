@@ -16,8 +16,8 @@ import socket
 class MysqlTestCase(unittest.TestCase):
     def setUp(self):
         self.container = MySqlContainer()
-        self.container.start()
         self.container.waiting_for(HealthcheckWaitStrategy())
+        self.container.start()
         if os.environ.get("CI"):
             host = socket.gethostbyname(socket.gethostname())
             print('host', host)
@@ -34,7 +34,7 @@ class MysqlTestCase(unittest.TestCase):
     def test_connect(self):
         self.assertEqual(SQL.parse(self.mysql.connection_string)["driver"], "mysqldb")
         self.mysql.connect()
-        self.mysql.disconnect()
+        self.mysql.close()
 
     def tearDown(self):
         self.container.stop()
@@ -42,8 +42,8 @@ class MysqlTestCase(unittest.TestCase):
 class PostgresTestCase(unittest.TestCase):
     def setUp(self):
         self.container = PostgresContainer("postgres")  # 可以指定版本
-        self.container.start()
         self.container.waiting_for(HealthcheckWaitStrategy())
+        self.container.start()
         if os.environ.get("CI"):
             host = socket.gethostbyname(socket.gethostname())
             print('host', host)
@@ -60,13 +60,13 @@ class PostgresTestCase(unittest.TestCase):
     def test_connect(self):
         self.assertEqual(SQL.parse(self.pg.connection_string)["driver"], "psycopg2")
         self.pg.connect()
-        self.pg.disconnect()
+        self.pg.close()
 
     def test_databases(self):
         self.pg.connect()
         dba = DBA(self.pg)
         self.assertListEqual(['postgres', 'test'], dba.databases)
-        self.pg.disconnect()
+        self.pg.close()
     def test_tx(self):
         host = socket.gethostbyname(socket.gethostname())
         with Postgres(SQL.connect_string(

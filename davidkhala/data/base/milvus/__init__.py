@@ -3,7 +3,7 @@ from typing import Literal
 import pandas as pd
 from davidkhala.data.base.milvus.collection import CollectionDict, Collection
 from pymilvus import MilvusClient, model, CollectionSchema, FieldSchema, DataType
-
+from davidkhala.data.base.common import Connectable
 
 def empty_schema(index_column='id', index_type: Literal[DataType.INT64, DataType.VARCHAR] = DataType.INT64,
                  **kwargs) -> CollectionSchema:
@@ -13,7 +13,7 @@ def empty_schema(index_column='id', index_type: Literal[DataType.INT64, DataType
     ], **kwargs)
 
 
-class Client:
+class Client(Connectable):
     def __init__(self, client: MilvusClient):
         self.client = client
         self.embedding_fn = model.DefaultEmbeddingFunction()  # small embedding model "paraphrase-albert-small-v2"
@@ -21,7 +21,7 @@ class Client:
     def get_collection(self, collection_name: str) -> Collection:
         return Collection(self.client.describe_collection(collection_name))
 
-    def disconnect(self):
+    def close(self):
         self.client.close()
 
     def create_collection(self, collection_name: str,

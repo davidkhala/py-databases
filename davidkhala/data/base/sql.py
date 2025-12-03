@@ -1,7 +1,10 @@
-from typing import Dict, Any, Sequence
+from typing import Dict, Any
 from typing import Union
+from urllib.parse import urlparse, parse_qs
+
+from sqlalchemy import create_engine, text, Engine, CursorResult
+
 from davidkhala.data.base.common import Connectable
-from sqlalchemy import create_engine, text, Engine, CursorResult, RowMapping
 
 
 class SQL(Connectable):
@@ -13,9 +16,6 @@ class SQL(Connectable):
 
     def connect(self):
         self.connection = self.client.connect()
-
-    def close(self):
-        self.connection.close()
 
     def query(self,
               template: str,

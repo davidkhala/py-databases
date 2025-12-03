@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
 from testcontainers.mysql import MySqlContainer
 from testcontainers.postgres import PostgresContainer
-from davidkhala.data.base.common import Connectable
+from davidkhala.data.base.sql import SQL
 from davidkhala.data.base.mysql import Mysql
 from davidkhala.data.base.pg import Postgres
 from davidkhala.data.base.pg.dba import DBA
@@ -21,7 +21,7 @@ class MysqlTestCase(unittest.TestCase):
         if os.environ.get("CI"):
             host = socket.gethostbyname(socket.gethostname())
             print('host', host)
-            self.mysql = Mysql(Connectable.connect_string(
+            self.mysql = Mysql(SQL.connect_string(
                 "mysql", host,
                 driver="mysqldb", username='test', password='test', name='test',
                 port=self.container.get_exposed_port(3306),
@@ -32,7 +32,7 @@ class MysqlTestCase(unittest.TestCase):
             self.mysql = Mysql(connection_string)
 
     def test_connect(self):
-        self.assertEqual(Connectable.parse(self.mysql.connection_string)["driver"], "mysqldb")
+        self.assertEqual(SQL.parse(self.mysql.connection_string)["driver"], "mysqldb")
         self.mysql.connect()
         self.mysql.disconnect()
 
@@ -47,7 +47,7 @@ class PostgresTestCase(unittest.TestCase):
         if os.environ.get("CI"):
             host = socket.gethostbyname(socket.gethostname())
             print('host', host)
-            self.pg = Postgres(Connectable.connect_string(
+            self.pg = Postgres(SQL.connect_string(
                 "postgresql", host,
                 driver="psycopg2", username='test', password='test', name='test',
                 port=self.container.get_exposed_port(5432),
@@ -58,7 +58,7 @@ class PostgresTestCase(unittest.TestCase):
             self.pg = Postgres(connection_string)
 
     def test_connect(self):
-        self.assertEqual(Connectable.parse(self.pg.connection_string)["driver"], "psycopg2")
+        self.assertEqual(SQL.parse(self.pg.connection_string)["driver"], "psycopg2")
         self.pg.connect()
         self.pg.disconnect()
 
@@ -68,10 +68,14 @@ class PostgresTestCase(unittest.TestCase):
         self.assertListEqual(['postgres', 'test'], dba.databases)
         self.pg.disconnect()
     def test_tx(self):
-        self.pg.connect()
-        with Session(self.pg.client) as session:
-            session.commit()
-        self.pg.disconnect()
+        host = socket.gethostbyname(socket.gethostname())
+        with Postgres(SQL.connect_string(
+                "postgresql", host,
+                driver="psycopg2", username='test', password='test', name='test',
+                port=self.container.get_exposed_port(5432),
+            )) as pg:
+            with Session(pg.client) as session:
+                session.commit()
 
 
     def tearDown(self):

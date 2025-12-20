@@ -19,12 +19,14 @@ class SQL(Connectable):
 
     def query(self,
               template: str,
-              values: Dict[str, Any]|None = None,
-              request_options: Dict[str, Any]|None = None
+              values: Dict[str, Any] | None = None,
+              request_options: Dict[str, Any] | None = None
               ) -> CursorResult[Any]:
         return self.connection.execute(text(template), values, execution_options=request_options)
+
     @staticmethod
-    def rows_to_dicts(result:CursorResult): return result.mappings().all()
+    def rows_to_dicts(result: CursorResult):
+        return result.mappings().all()
 
     @staticmethod
     def connect_string(

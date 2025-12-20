@@ -39,10 +39,10 @@ class AbstractOperator:
 
     def ensure_stopped(self):
         data = self.get()
-        currentState = data['currentState']
-        if currentState == Status['started']:
+        current_state = data['currentState']
+        if current_state == Status['started']:
             self.stop()
-        if currentState in [Status['started'], Status['stopping']]:
+        if current_state in [Status['started'], Status['stopping']]:
             self.wait_until(Status['stopped'])
         return data
 

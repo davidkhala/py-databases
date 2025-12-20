@@ -35,7 +35,8 @@ class CapellaTestCase(unittest.TestCase):
         sample = Sample(secret, cls.organization_id, cls.project_id, cls.cluster_id)
         list(sample.preset())
         cls.couchbase = Couchbase(password, domain=operator.domain)
-        cls.couchbase.connect('travel-sample')
+        cls.couchbase.bucket_name = 'travel-sample'
+        cls.couchbase.connect()
         cls.collection = cls.couchbase.bucket.scope("inventory").collection("airline")
 
     def test_dependencies(self):

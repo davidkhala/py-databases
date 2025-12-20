@@ -13,33 +13,35 @@ def empty_schema(index_column='id', index_type: Literal[DataType.INT64, DataType
     ], **kwargs)
 
 
-class Client(Connectable):
-    def __init__(self, client: MilvusClient):
-        self.client = client
+class Client(MilvusClient, Connectable):
+    def __init__(self, uri: str = "http://localhost:19530",
+        user: str = "",
+        password: str = "",
+        db_name: str = "",**kwargs):
+        super().__init__(uri, user, password, db_name,**kwargs)
+
         self.embedding_fn = model.DefaultEmbeddingFunction()  # small embedding model "paraphrase-albert-small-v2"
 
     def get_collection(self, collection_name: str) -> Collection:
-        return Collection(self.client.describe_collection(collection_name))
+        return Collection(super().describe_collection(collection_name))
 
-    def close(self):
-        self.client.close()
 
     def create_collection(self, collection_name: str,
                           *,
                           schema: CollectionSchema = None,
                           dimension: int = None
                           ):
-        if not self.client.has_collection(collection_name):
+        if not super().has_collection(collection_name):
             if schema:
-                self.client.create_collection(collection_name, schema=schema)
+                super().create_collection(collection_name, schema=schema)
             else:
                 if not dimension:
                     dimension = self.embedding_fn.dim
-                self.client.create_collection(collection_name, dimension)
+                super().create_collection(collection_name, dimension)
         return self.get_collection(collection_name)
 
     def list_collections(self) -> list[str]:
-        return self.client.list_collections()
+        return super().list_collections()
 
     def insert_dataframe(self, collection_name: str, df: pd.DataFrame):
-        self.client.insert(collection_name, df.to_dict(orient="records"))
+        super().insert(collection_name, df.to_dict(orient="records"))

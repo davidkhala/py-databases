@@ -3,8 +3,8 @@ import unittest
 
 from sqlalchemy.orm import Session
 from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
-from testcontainers.mysql import MySqlContainer
-from testcontainers.postgres import PostgresContainer
+from davidkhala.data.base.mysql.testcontainers import Container as MySqlContainer
+from davidkhala.data.base.pg.testcontainers import Container as PostgresContainer
 from davidkhala.data.base.sql import SQL
 from davidkhala.data.base.mysql import Mysql
 from davidkhala.data.base.pg import Postgres
@@ -39,9 +39,10 @@ class MysqlTestCase(unittest.TestCase):
     def tearDown(self):
         self.container.stop()
 
+
 class PostgresTestCase(unittest.TestCase):
     def setUp(self):
-        self.container = PostgresContainer("postgres")  # 可以指定版本
+        self.container = PostgresContainer()
         self.container.waiting_for(HealthcheckWaitStrategy())
         self.container.start()
         if os.environ.get("CI"):
@@ -67,19 +68,20 @@ class PostgresTestCase(unittest.TestCase):
         dba = DBA(self.pg)
         self.assertListEqual(['postgres', 'test'], dba.databases)
         self.pg.close()
+
     def test_tx(self):
         host = socket.gethostbyname(socket.gethostname())
         with Postgres(SQL.connect_string(
                 "postgresql", host,
                 driver="psycopg2", username='test', password='test', name='test',
                 port=self.container.get_exposed_port(5432),
-            )) as pg:
+        )) as pg:
             with Session(pg.client) as session:
                 session.commit()
 
-
     def tearDown(self):
         self.container.stop()
+
 
 if __name__ == '__main__':
     unittest.main()

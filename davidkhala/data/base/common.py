@@ -4,7 +4,6 @@ from typing import Any
 
 class Connectable(ABC):
     def __init__(self, *args, **kwargs):
-        self.connection_string: str
         self.client: Any
         self.connection: Any
 

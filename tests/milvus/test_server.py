@@ -1,18 +1,18 @@
 import os
 import unittest
 
-from pymilvus import MilvusClient, MilvusException
+from pymilvus import MilvusException
 from pymilvus import connections, model, FieldSchema, DataType, Collection, CollectionSchema, has_collection
 from pymilvus.client.types import MetricType
 
 from davidkhala.data.base.milvus import Client, empty_schema
-from davidkhala.data.base.milvus.inline import create_index, get_index, search
 from davidkhala.data.base.milvus.format import default_index_name
+from davidkhala.data.base.milvus.inline import create_index, get_index, search
 
 
 class LocalhostTestCase(unittest.TestCase):
     def setUp(self):
-        self.client = Client(MilvusClient())
+        self.client = Client()
 
     def test_collections(self):
         c_name = 'test'
@@ -22,8 +22,8 @@ class LocalhostTestCase(unittest.TestCase):
         print(collections)
 
     def test_drop_collection(self):
-        self.client.client.drop_collection("embedding_collection")
-        self.client.client.create_schema()
+        self.client.drop_collection("embedding_collection")
+        self.client.create_schema()
 
     def test_global_connect_context(self):
 
@@ -87,13 +87,13 @@ class LocalhostTestCase(unittest.TestCase):
 
 class ZillizTestCase(unittest.TestCase):
     def setUp(self):
-        self.client = Client(MilvusClient(
+        self.client = Client(
             uri=os.getenv("CLUSTER_ENDPOINT"),
             token=os.getenv("CLUSTER_TOKEN"),
-        ))
+        )
 
     def test_create_collection(self):
-        client = self.client.client
+        client = self.client
         collection_name = "demo_collection"
         if client.has_collection(collection_name):
             client.drop_collection(collection_name)
@@ -103,7 +103,7 @@ class ZillizTestCase(unittest.TestCase):
         print(c)
 
     def test_create_schema_collection(self):
-        client = self.client.client
+        client = self.client
         collection_name = "collection"
         if client.has_collection(collection_name):
             client.drop_collection(collection_name)

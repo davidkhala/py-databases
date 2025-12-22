@@ -5,6 +5,7 @@ from davidkhala.data.base.milvus.collection import CollectionDict, Collection
 from pymilvus import MilvusClient, model, CollectionSchema, FieldSchema, DataType
 from davidkhala.data.base.common import Connectable
 
+
 def empty_schema(index_column='id', index_type: Literal[DataType.INT64, DataType.VARCHAR] = DataType.INT64,
                  **kwargs) -> CollectionSchema:
     kwargs["enable_dynamic_field"] = True  # no schema enforce
@@ -15,16 +16,21 @@ def empty_schema(index_column='id', index_type: Literal[DataType.INT64, DataType
 
 class Client(MilvusClient, Connectable):
     def __init__(self, uri: str = "http://localhost:19530",
-        user: str = "",
-        password: str = "",
-        db_name: str = "",**kwargs):
-        super().__init__(uri, user, password, db_name,**kwargs)
+                 user: str = "",
+                 password: str = "",
+                 db_name: str = "",
+                 token: str = "",
+                 **kwargs):
+        super().__init__(uri, user, password, db_name, token, **kwargs)
 
         self.embedding_fn = model.DefaultEmbeddingFunction()  # small embedding model "paraphrase-albert-small-v2"
 
+    def connect(self):
+        """dry: connection established in __init__"""
+        pass
+
     def get_collection(self, collection_name: str) -> Collection:
         return Collection(super().describe_collection(collection_name))
-
 
     def create_collection(self, collection_name: str,
                           *,

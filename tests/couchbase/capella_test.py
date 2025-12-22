@@ -1,8 +1,8 @@
 import os
 import unittest
 
-from couchbase.collection import Collection
 from couchbase.options import (QueryOptions)
+from requests import HTTPError
 
 from davidkhala.data.base.couchbase import Couchbase
 from davidkhala.data.base.couchbase.capella.bucket import calculateId, Sample
@@ -10,37 +10,38 @@ from davidkhala.data.base.couchbase.capella.cluster import Cluster
 from davidkhala.data.base.couchbase.capella.organization import Organization
 from davidkhala.data.base.couchbase.capella.project import Project
 
-secret = os.getenv("API_SECRET")
-password = os.getenv("ADMINISTRATOR_PASSWORD")
+secret = os.getenv("API_SECRET") or 'V0tDTlZFWTRKR0JaNG1ObW9WaWl3OXlOS1hpZnFOQ3o6Q1g0ZitLUVFaNmpjTFVvZV9JY2hIQiVFaGxGQERlNnVMT0pebngtMGhnSGglOD90YS1FcEZlZUpDSHB2JCViRA=='
+password = os.getenv("ADMINISTRATOR_PASSWORD") or 'CouchBase-david@2025'
 
 
 class CapellaTestCase(unittest.TestCase):
-    organization_id: str
-    project_id: str
-    cluster_id: str
-    domain: str
-    couchbase: Couchbase
-    collection: Collection
 
-    @classmethod
-    def setUpClass(cls):
+    def setUp(self):
         org = Organization(secret)
-        cls.organization_id = org.list()[0]['id']
-        project = Project(secret, cls.organization_id)
-        cls.project_id = project.list()[0]['id']
-        cluster = Cluster(secret, cls.organization_id, cls.project_id)
-        cls.cluster_id = cluster.list()[0]['id']
-        operator = Cluster.Operator(secret, cls.organization_id, cls.project_id, cls.cluster_id)
-        operator.ensure_started()
-        sample = Sample(secret, cls.organization_id, cls.project_id, cls.cluster_id)
+        self.organization_id = org.list()[0]['id']
+        project = Project(secret, self.organization_id)
+        self.project_id = project.list()[0]['id']
+        cluster = Cluster(secret, self.organization_id, self.project_id)
+        self.cluster_id = cluster.list()[0]['id']
+        self.operator = Cluster.Operator(secret, self.organization_id, self.project_id, self.cluster_id)
+        self.operator.ensure_started()
+        sample = Sample(secret, self.organization_id, self.project_id, self.cluster_id)
         list(sample.preset())
-        cls.couchbase = Couchbase(password, domain=operator.domain)
-        cls.couchbase.bucket_name = 'travel-sample'
-        cls.couchbase.connect()
-        cls.collection = cls.couchbase.bucket.scope("inventory").collection("airline")
+        self.couchbase = Couchbase(password, domain=self.operator.domain)
+        self.couchbase.bucket_name = 'travel-sample'
+        self.couchbase.connect()
+        self.collection = (self.couchbase.bucket.scope("inventory").collection("airline"))
 
     def test_dependencies(self):
         self.assertEqual('dHJhdmVsLXNhbXBsZQ==', calculateId('travel-sample'))
+
+    def test_appService(self):
+        operator = self.operator.appServiceOperator
+        print(operator.get())
+        if operator.is_free:
+            with self.assertRaises(HTTPError) as e:
+                operator.stop()
+            self.assertEqual(e.exception.response.status_code, 422, 'This resource is not available during your self-service trial. Upgrade for access.')
 
     def test_upsert(self):
         def upsert_document(doc):

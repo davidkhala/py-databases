@@ -80,13 +80,14 @@ class Cluster:
 
         @property
         def appService(self):
-            return self.data['appServiceId']
+            return self.data.get('appServiceId')
 
         @property
         def appServiceOperator(self):
-            # TODO
-            return AppService.Operator(self.api.secret, self.organization_id, self.project_id, self.cluster_id,
-                                       self.appService)
+            if self.appService:
+                return AppService.Operator(self.api.secret, self.organization_id, self.project_id, self.cluster_id,
+                                           self.appService)
+            return None
 
         def start(self):
             self.api.post('/activationState', json={'turnOnLinkedAppService': self.turnOnLinkedAppService})
@@ -110,15 +111,20 @@ class AppService:
 
         def __init__(self, api_secret, organization_id, project_id, cluster_id, appservice_id):
             self.api = API(
-                f"/{organization_id}/projects/${project_id}/clusters/${cluster_id}/appservices/${appservice_id}",
+                f"/{organization_id}/projects/{project_id}/clusters/{cluster_id}/appservices/{appservice_id}",
                 api_secret)
-            self.data: dict = {}
+            self.data: dict | None = None
 
         def stop(self):
             self.api.delete('/activationState')
 
         def get(self):
             self.data = self.api.get('')
+            return self.data
+
+        @property
+        def is_free(self) -> bool:
+            return self.data['plan'] == ''
 
         def start(self):
             self.api.post('/activationState')

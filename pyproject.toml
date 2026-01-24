@@ -17,6 +17,8 @@ milvus = ["pymilvus[model, milvus_lite]", "hf_xet"]
 mysql = ["sqlalchemy", "mysqlclient"]
 pg = ["sqlalchemy", "psycopg2"]
 maria = ["sqlalchemy", "mariadb"]
+mongo = ["pymongo"]
+
 [dependency-groups]
 dev = ["pytest", "seaborn", "matplotlib", "testcontainers[mysql, postgres]"]
 

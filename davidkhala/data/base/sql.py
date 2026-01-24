@@ -4,7 +4,7 @@ from urllib.parse import urlparse, parse_qs
 
 from sqlalchemy import create_engine, text, Engine, CursorResult
 
-from davidkhala.data.base.common import Connectable
+from davidkhala.data.base.__init__ import Connectable
 
 
 class SQL(Connectable):

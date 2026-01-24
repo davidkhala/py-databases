@@ -3,7 +3,7 @@ from typing import Any
 
 
 class Connectable(ABC):
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         self.client: Any
         self.connection: Any
 

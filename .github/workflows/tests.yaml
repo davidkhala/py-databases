@@ -17,6 +17,18 @@ jobs:
           tests: tests
           test-entry-point: pytest couchbase
           extras: couchbase
+  mongo:
+    runs-on: ubuntu-latest
+    environment: atlas
+    env:
+      ATLAS_PASSWORD: ${{secrets.ATLAS_PASSWORD}}
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          tests: tests
+          test-entry-point: pytest mongo
+          extras: mongo
   duck:
     runs-on: ubuntu-latest
     steps:

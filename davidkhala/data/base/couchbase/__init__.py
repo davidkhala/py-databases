@@ -5,7 +5,7 @@ from couchbase.bucket import Bucket
 from couchbase.cluster import Cluster
 from couchbase.options import ClusterOptions
 
-from davidkhala.data.base.common import Connectable
+from davidkhala.data.base.__init__ import Connectable
 
 
 class Couchbase(Connectable):

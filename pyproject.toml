@@ -5,7 +5,7 @@ description = ""
 authors = [{ name = "David Liu", email = "david-khala@hotmail.com" }]
 requires-python = ">=3.10"
 readme = "README.md"
-dependencies = []
+dependencies = ["davidkhala-utils"]
 
 [project.optional-dependencies]
 couchbase = [

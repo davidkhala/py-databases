@@ -1,21 +1,20 @@
-from abc import abstractmethod, ABC
 from typing import Any
 
+from davidkhala.utils.syntax.interface import SupportsClose
 
-class Connectable(ABC):
+
+class Connectable(SupportsClose):
     def __init__(self):
         self.client: Any
-        self.connection: Any
+        self.connection: SupportsClose | None = None
 
-    @abstractmethod
-    def connect(self):
-        ...
+    def connect(self) -> bool: ...
 
     def close(self):
         self.connection.close()
 
     def __enter__(self):
-        self.connect()
+        assert self.connect(), f"{self.__class__.__name__}::connect() failed"
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):

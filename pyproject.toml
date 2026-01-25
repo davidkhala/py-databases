@@ -20,8 +20,9 @@ maria = ["sqlalchemy", "mariadb"]
 mongo = ["pymongo"]
 
 [dependency-groups]
-dev = ["pytest", "seaborn", "matplotlib", "testcontainers[mysql, postgres]"]
-
+dev = ["pytest"]
+sql= ["testcontainers[mysql, postgres]"]
+duck = ["seaborn","matplotlib", "pandas<3"]
 [tool.hatch.build.targets.sdist]
 include = ["davidkhala"]
 

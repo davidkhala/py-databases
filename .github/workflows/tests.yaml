@@ -38,6 +38,7 @@ jobs:
           tests: tests
           test-entry-point: python duckdb_test.py
           extras: duck
+          groups: duck
   milvus:
     runs-on: ubuntu-latest
     environment: milvus
@@ -64,3 +65,4 @@ jobs:
           tests: tests
           test-entry-point: pytest sql_test.py
           extras: mysql pg
+          groups: sql

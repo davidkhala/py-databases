@@ -4,8 +4,11 @@ import seaborn
 import matplotlib.pyplot as plt
 class AirlineTestCase(unittest.TestCase):
 
-    db = duckdb.connect()
     airport_csv= "fixtures/airports.csv"
+    @classmethod
+    def setUpClass(cls):
+        cls.db = duckdb.connect()
+
     @classmethod
     def tearDownClass(cls):
         cls.db.close()

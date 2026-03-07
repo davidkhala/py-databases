@@ -1,9 +1,9 @@
 from typing import Any
 
-from davidkhala.utils.syntax.interface import SupportsClose
+from davidkhala.utils.protocol import SupportsClose
 
 
-class Connectable(SupportsClose):
+class Connectable:
     def __init__(self):
         self.client: Any
         self.connection: SupportsClose | None = None

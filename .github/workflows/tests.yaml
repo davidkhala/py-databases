@@ -63,6 +63,6 @@ jobs:
       - uses: davidkhala/uv-buildpack@main
         with:
           tests: tests
-          test-entry-point: pytest sql_test.py
-          extras: mysql pg
+          test-entry-point: pytest sql
+          extras: mysql pg db2
           groups: sql

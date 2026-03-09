@@ -14,8 +14,12 @@ class SQL(Connectable):
         self.connection_string = connection_string
         self.client: Engine = create_engine(connection_string)
 
-    def connect(self):
-        self.connection = self.client.connect()
+    def connect(self) -> bool:
+        try:
+            self.connection = self.client.connect()
+            return True
+        except Exception:
+            return False
 
     def query(self,
               template: str,

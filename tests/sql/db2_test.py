@@ -1,21 +1,23 @@
 import unittest
 
-from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
-
+from davidkhala.data.base.db2.dba import DBA
 from davidkhala.data.base.db2.testcontainers import Container
-from sqlalchemy import create_engine, text
+from davidkhala.data.base.sql import SQL
+
 
 class DB2TestCase(unittest.TestCase):
     def setUp(self):
         self.container = Container()
         self.container.start()
     def test_connect(self):
-        engine = create_engine(self.container.get_connection_url())
-        with engine.begin() as connection:
-            result = connection.execute(text("select service_level from sysibmadm.env_inst_info"))
-            print(result.fetchall())
-        connection.close()
+        sql = SQL(self.container.get_connection_url())
+        sql.connect()
+        dba = DBA(sql)
+        self.assertEqual('DB2 v12.1.4.0', dba.version)
+
     def tearDown(self):
         self.container.stop()
+
+
 if __name__ == '__main__':
     unittest.main()

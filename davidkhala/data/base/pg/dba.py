@@ -10,4 +10,3 @@ class DBA:
     def databases(self):
         r = self._.query("SELECT datname FROM pg_database where datistemplate = FALSE")
         return r.scalars().all()
-

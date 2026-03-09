@@ -2,8 +2,6 @@ import os
 import socket
 import unittest
 
-from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
-
 from davidkhala.data.base.mysql import Mysql
 from davidkhala.data.base.mysql.testcontainers import Container as MySqlContainer
 from davidkhala.data.base.sql import SQL
@@ -12,7 +10,6 @@ from davidkhala.data.base.sql import SQL
 class MysqlTestCase(unittest.TestCase):
     def setUp(self):
         self.container = MySqlContainer()
-        self.container.waiting_for(HealthcheckWaitStrategy())
         self.container.start()
         if os.environ.get("CI"):
             host = socket.gethostbyname(socket.gethostname())
@@ -28,11 +25,16 @@ class MysqlTestCase(unittest.TestCase):
             self.mysql = Mysql(connection_string)
 
     def test_connect(self):
-        self.assertEqual(SQL.parse(self.mysql.connection_string)["driver"], "mysqldb")
+        self.assertIn(SQL.parse(self.mysql.connection_string)["driver"], [
+            "mysqldb", # choice of extra
+            'pymysql', # default driver of testcontainers
+        ])
         self.mysql.connect()
         self.mysql.close()
 
     def tearDown(self):
         self.container.stop()
+
+
 if __name__ == '__main__':
     unittest.main()

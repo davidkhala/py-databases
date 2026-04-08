@@ -19,11 +19,13 @@ pg = ["sqlalchemy", "psycopg2"]
 maria = ["sqlalchemy", "mariadb"]
 mongo = ["pymongo"]
 db2 = ["sqlalchemy", "ibm-db"]
+astra  = ['astrapy']
 
 [dependency-groups]
 dev = ["pytest"]
 sql = ["testcontainers[mysql, postgres, db2]"]
 duck = ["seaborn", "matplotlib", "pandas<3"]
+
 [tool.hatch.build.targets.sdist]
 include = ["davidkhala"]
 
@@ -33,3 +35,8 @@ include = ["davidkhala"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.uv]
+required-environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'"
+]

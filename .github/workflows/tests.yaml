@@ -14,7 +14,6 @@ jobs:
       - uses: actions/checkout@main
       - uses: davidkhala/uv-buildpack@main
         with:
-          tests: tests
           test-entry-point: pytest couchbase
           extras: couchbase
   mongo:
@@ -26,7 +25,6 @@ jobs:
       - uses: actions/checkout@main
       - uses: davidkhala/uv-buildpack@main
         with:
-          tests: tests
           test-entry-point: pytest mongo
           extras: mongo
   duck:
@@ -35,7 +33,6 @@ jobs:
       - uses: actions/checkout@main
       - uses: davidkhala/uv-buildpack@main
         with:
-          tests: tests
           test-entry-point: python duckdb_test.py
           extras: duck
           groups: duck
@@ -53,7 +50,6 @@ jobs:
           bash standalone_embed.sh start
       - uses: davidkhala/uv-buildpack@main
         with:
-          tests: tests
           test-entry-point: pytest milvus
           extras: milvus
   sql:
@@ -62,7 +58,17 @@ jobs:
       - uses: actions/checkout@main
       - uses: davidkhala/uv-buildpack@main
         with:
-          tests: tests
           test-entry-point: pytest sql
           extras: mysql pg db2
           groups: sql
+  astra:
+    runs-on: ubuntu-latest
+    environment: astra
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          test-entry-point: pytest astra_test.py
+          extras: astra
+    env:
+      TOKEN: ${{secrets.TOKEN}}

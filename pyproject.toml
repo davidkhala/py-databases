@@ -20,6 +20,7 @@ maria = ["sqlalchemy", "mariadb"]
 mongo = ["pymongo"]
 db2 = ["sqlalchemy", "ibm-db"]
 astra  = ['astrapy']
+cassandra = ['cassandra-driver']
 
 [dependency-groups]
 dev = ["pytest"]

@@ -20,11 +20,12 @@ maria = ["sqlalchemy", "mariadb"]
 mongo = ["pymongo"]
 db2 = ["sqlalchemy", "ibm-db"]
 astra  = ['astrapy']
-cassandra = ['cassandra-driver']
+cassandra = ["cassandra-driver; python_version < '3.12'"]
 
 [dependency-groups]
 dev = ["pytest"]
 sql = ["testcontainers[mysql, postgres, db2]"]
+cassandra = ["testcontainers[cassandra]"]
 duck = ["seaborn", "matplotlib", "pandas<3"]
 
 [tool.hatch.build.targets.sdist]

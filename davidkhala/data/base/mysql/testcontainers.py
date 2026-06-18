@@ -6,9 +6,11 @@ class Container(MySqlContainer):
     def __init__(self, **kwargs):
         if not hasattr(kwargs, 'healthcheck'):
             kwargs['healthcheck'] = {
-                "test": ["CMD", "mysqladmin", "ping","-uroot","-p$MYSQL_ROOT_PASSWORD",  "-h", "localhost"]
+                "test": ["CMD", "mysqladmin", "ping", "-uroot", "-p$MYSQL_ROOT_PASSWORD", "-h", "localhost"]
             }
         super().__init__(**kwargs)
-    def start(self):
         self.waiting_for(HealthcheckWaitStrategy())
-        super().start()
+
+    @property
+    def exposed_port(self):
+        return self.get_exposed_port(self.port)

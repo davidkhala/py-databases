@@ -8,3 +8,8 @@ class Container(PostgresContainer):
                 "test": ["CMD", "pg_isready", "-U", "postgres"]
             }
         super().__init__(**kwargs)
+        self.waiting_for(HealthcheckWaitStrategy())
+
+    @property
+    def exposed_port(self):
+        return self.get_exposed_port(self.port)

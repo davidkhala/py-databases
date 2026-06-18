@@ -14,7 +14,6 @@ from davidkhala.data.base.sql import SQL
 class PostgresTestCase(unittest.TestCase):
     def setUp(self):
         self.container = PostgresContainer()
-        self.container.waiting_for(HealthcheckWaitStrategy())
         self.container.start()
         if os.environ.get("CI"):
             host = socket.gethostbyname(socket.gethostname())
@@ -22,7 +21,7 @@ class PostgresTestCase(unittest.TestCase):
             self.pg = Postgres(SQL.connect_string(
                 "postgresql", host,
                 driver="psycopg2", username='test', password='test', name='test',
-                port=self.container.get_exposed_port(5432),
+                port=self.container.exposed_port,
             ))
         else:
             connection_string = self.container.get_connection_url()
@@ -45,12 +44,14 @@ class PostgresTestCase(unittest.TestCase):
         with Postgres(SQL.connect_string(
                 "postgresql", host,
                 driver="psycopg2", username='test', password='test', name='test',
-                port=self.container.get_exposed_port(5432),
+                port=self.container.exposed_port,
         )) as pg:
             with Session(pg.client) as session:
                 session.commit()
 
     def tearDown(self):
         self.container.stop()
+
+
 if __name__ == '__main__':
     unittest.main()

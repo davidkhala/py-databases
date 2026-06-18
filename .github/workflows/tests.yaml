@@ -68,7 +68,7 @@ jobs:
       - uses: actions/checkout@main
       - uses: davidkhala/uv-buildpack@main
         with:
-          test-entry-point: pytest astra_test.py
+          test-entry-point: pytest cassandra/astra_test.py
           extras: astra
     env:
       TOKEN: ${{secrets.TOKEN}}

@@ -20,5 +20,14 @@ class DBATest(BaseTest):
 
         print(self.dba._.list_databases())
 
+class VectorTest:
+    def setUp(self) -> None:
+        # TODO
+        self.keyspace = 'vector'
+        self._.query(f"""
+        CREATE KEYSPACE {self.keyspace}
+        WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}
+        """)
+
 if __name__ == '__main__':
     unittest.main()

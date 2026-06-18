@@ -17,7 +17,7 @@ class MysqlTestCase(unittest.TestCase):
             self.mysql = Mysql(SQL.connect_string(
                 "mysql", host,
                 driver="mysqldb", username='test', password='test', name='test',
-                port=self.container.get_exposed_port(3306),
+                port=self.container.exposed_port,
             ))
         else:
             connection_string = self.container.get_connection_url()
@@ -26,8 +26,8 @@ class MysqlTestCase(unittest.TestCase):
 
     def test_connect(self):
         self.assertIn(SQL.parse(self.mysql.connection_string)["driver"], [
-            "mysqldb", # choice of extra
-            'pymysql', # default driver of testcontainers
+            "mysqldb",  # choice of extra
+            'pymysql',  # default driver of testcontainers
         ])
         self.mysql.connect()
         self.mysql.close()

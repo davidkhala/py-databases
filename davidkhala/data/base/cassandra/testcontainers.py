@@ -2,6 +2,7 @@ from testcontainers.cassandra import CassandraContainer
 from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
 from testcontainers.core.container import DockerContainer
 
+
 class Container(CassandraContainer):
     """
     home: https://testcontainers.com/modules/cassandra/?language=python
@@ -10,16 +11,16 @@ class Container(CassandraContainer):
     """
 
     @property
-    def exposed_port(self)-> int:
+    def exposed_port(self) -> int:
         return self.get_exposed_port(self.CQL_PORT)
+
 
 class DataStax(DockerContainer):
     """
     for DataStax Enterprise server
     """
-    def __init__(
-        self, image: str = "datastax/dse-server:6.8.64", **kwargs
-    ) -> None:
+
+    def __init__(self, image: str = "datastax/dse-server:6.8.64", **kwargs):
         kwargs['healthcheck'] = {
             "test": ["CMD", "sh", "-c", "cqlsh -e 'DESCRIBE KEYSPACES;' || exit 1"]
         }

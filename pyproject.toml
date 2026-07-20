@@ -17,6 +17,15 @@ milvus = ["pymilvus[model, milvus_lite]", "hf_xet"]
 mysql = ["sqlalchemy", "mysqlclient"]
 pg = ["sqlalchemy", "psycopg2"]
 maria = ["sqlalchemy", "mariadb"]
+mssql = [
+    "sqlalchemy",
+    "pyodbc",
+]
+mssql-proxy = [
+    "sqlalchemy",
+    "PySocks",
+    "sqlalchemy-pytds",
+]
 mongo = ["pymongo"]
 db2 = ["sqlalchemy", "ibm-db"]
 astra  = ['astrapy']

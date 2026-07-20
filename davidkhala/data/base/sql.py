@@ -1,6 +1,6 @@
 from typing import Dict, Any
 from typing import Union
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, quote, unquote
 
 from sqlalchemy import create_engine, text, Engine, CursorResult
 
@@ -26,7 +26,11 @@ class SQL(Connectable):
               values: Dict[str, Any] | None = None,
               request_options: Dict[str, Any] | None = None
               ) -> CursorResult[Any]:
-        return self.connection.execute(text(template), values, execution_options=request_options)
+        return self.connection.execute(
+            text(template),
+            values,
+            execution_options=request_options,
+        )
 
     @staticmethod
     def rows_to_dicts(result: CursorResult):
@@ -46,15 +50,22 @@ class SQL(Connectable):
 
         auth = ''
         if username:
-            auth += username
+            auth += quote(username, safe='')
             if password:
-                auth += f':{password}'
+                auth += f":{quote(password, safe='')}"
             auth += '@'
 
-        base = f"{dialect}{'+' + driver if driver else ''}://{auth}{domain}{':' + str(port) if port else ''}{'/' + name if name else ''}"
+        scheme = f"{dialect}{'+' + driver if driver else ''}"
+        location = (
+            f"{auth}{domain}{':' + str(port) if port else ''}"
+            f"{'/' + name if name else ''}"
+        )
+        base = f"{scheme}://{location}"
 
         if queries:
-            query_string = '&'.join(f"{key}={value}" for key, value in queries.items())
+            query_string = '&'.join(
+                f"{key}={value}" for key, value in queries.items()
+            )
             return f"{base}?{query_string}"
         else:
             return base
@@ -71,8 +82,8 @@ class SQL(Connectable):
         else:
             dialect = o.scheme
             driver = None
-        username = o.username
-        password = o.password
+        username = unquote(o.username) if o.username else None
+        password = unquote(o.password) if o.password else None
 
         name = o.path.lstrip('/')
 

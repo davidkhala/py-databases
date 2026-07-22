@@ -1,60 +1,73 @@
 import socket
 from contextlib import contextmanager
-from typing import Any, Iterator, Mapping
+from typing import Any, Iterator, TypedDict
 
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.engine import Engine
 
-from davidkhala.data.base.__init__ import Connectable
 from davidkhala.data.base.sql import SQL
 
 DEFAULT_DRIVER = "pyodbc"
 PROXY_CAPABLE_DRIVERS = "pytds"
 
 
+class ProxyConfigRequired(TypedDict):
+    host: str
+    port: int
+
+
+class ProxyConfig(ProxyConfigRequired, total=False):
+    type: str
+    username: str
+    password: str
+    rdns: bool
+
+
 class Client(SQL):
     def __init__(
-        self,
-        connection_string: str,
-        *,
-        driver: str | None = None,
-        proxy: Mapping[str, Any] | None = None,
-        **engine_kwargs,
+            self,
+            *,
+            connection_string: str | None = None,
+            domain: str,
+            username: str, password: str,
+            port: str | int = 1433, name: str = "",
+            queries: dict | None = None,
+            proxy: ProxyConfig | None = None,
+            **engine_kwargs,
     ):
-        Connectable.__init__(self)
-        self.proxy = dict(proxy) if proxy else None
-        parts = SQL.parse(connection_string)
-        chosen_driver = driver or (
-            PROXY_CAPABLE_DRIVERS
-            if self.proxy is not None
-            else DEFAULT_DRIVER
-        )
-        self.connection_string = SQL.connect_string(
-            "mssql",
-            parts["domain"],
-            driver=chosen_driver,
-            port=parts["port"],
-            username=parts["username"],
-            password=parts["password"],
-            name=parts["name"],
-            queries={
-                key: value
-                for key, value in parts["options"].items()
-                if chosen_driver == "pyodbc" or key != "driver"
-            },
-        )
-
-        current_driver = SQL.parse(self.connection_string)["driver"]
-        if self.proxy and current_driver != PROXY_CAPABLE_DRIVERS:
-            raise ValueError(
-                "Proxy support currently requires the pytds driver."
+        queries = dict(queries or {})
+        self.domain = domain
+        self.port = port
+        self.username = username
+        self.password = password
+        self.name = name
+        self.queries = queries
+        self.connection = None
+        if proxy:
+            self.proxy = proxy
+            queries.pop("driver", None)
+            engine_kwargs["creator"] = self._create_proxy_connection
+            self.connection_string = None
+            self.client = create_engine(
+                "mssql+pytds://", **engine_kwargs
             )
+        else:
+            self.proxy = None
+            driver = DEFAULT_DRIVER
+            queries["driver"] = "ODBC+Driver+18+for+SQL+Server"
+            connection_string = SQL.connect_string(
+                "mssql", domain,
+                port=port,
+                driver=driver,
+                username=username, password=password,
+                name=name,
+                queries=queries,
+            )
+            super().__init__(connection_string)
 
-        options = dict(engine_kwargs)
-        if self.proxy:
-            options["creator"] = self._create_proxy_connection
-
-        self.client: Engine = create_engine(self.connection_string, **options)
+            self.client: Engine = create_engine(
+                self.connection_string, **engine_kwargs
+            )
 
     @staticmethod
     def _coerce_option_value(value: str) -> Any:
@@ -63,9 +76,7 @@ class Client(SQL):
             return True
         if lowered == "false":
             return False
-        if value.isdigit():
-            return int(value)
-        return value
+        return int(value) if value.isdigit() else value
 
     @contextmanager
     def _proxy_context(self) -> Iterator[None]:
@@ -99,18 +110,17 @@ class Client(SQL):
     def _create_proxy_connection(self):
         import pytds
 
-        parts = SQL.parse(self.connection_string)
         options = {
             key: self._coerce_option_value(value)
-            for key, value in parts["options"].items()
+            for key, value in self.queries.items()
         }
         with self._proxy_context():
             return pytds.connect(
-                server=parts["domain"],
-                port=parts["port"] or 1433,
-                database=parts["name"] or None,
-                user=parts["username"],
-                password=parts["password"],
+                server=self.domain,
+                port=self.port or 1433,
+                database=self.name or None,
+                user=self.username,
+                password=self.password,
                 **options,
             )
 
@@ -138,7 +148,7 @@ class Client(SQL):
         return self.inspector().get_table_names(schema=schema)
 
     def inspect_table_schema(
-        self, table_name: str, schema: str = "dbo"
+            self, table_name: str, schema: str = "dbo"
     ) -> list[dict[str, Any]]:
         columns = self.inspector().get_columns(table_name, schema=schema)
         return [
@@ -154,7 +164,3 @@ class Client(SQL):
             }
             for column in columns
         ]
-
-
-class Mssql(Client):
-    pass

@@ -1,0 +1,16 @@
+name: mssql
+on:
+  push:
+jobs:
+  azure:
+    runs-on: ubuntu-latest
+    environment: azure
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          test-entry-point: pytest sql/mssql/azure_test.py
+          extras: mssql
+    env:
+      MSSQL_PASSWORD: ${{secrets.MSSQL_PASSWORD}}
+

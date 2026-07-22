@@ -33,7 +33,7 @@ cassandra = ["cassandra-driver; python_version < '3.12'"]
 
 [dependency-groups]
 dev = ["pytest"]
-sql = ["testcontainers[mysql, postgres, db2]"]
+sql = ["testcontainers[mysql, postgres, db2,mssql]"]
 cassandra = ["testcontainers[cassandra]"]
 duck = ["seaborn", "matplotlib", "pandas<3"]
 

@@ -1,5 +1,4 @@
-from typing import Dict, Any
-from typing import Union
+from typing import Any
 from urllib.parse import urlparse, parse_qs, quote, unquote
 
 from sqlalchemy import create_engine, text, Engine, CursorResult
@@ -8,11 +7,10 @@ from davidkhala.data.base.__init__ import Connectable
 
 
 class SQL(Connectable):
-    def __init__(self, connection_string: str):
+    def __init__(self, connection_string: str, **engine_kwargs):
         super().__init__()
-        self.connection = None
         self.connection_string = connection_string
-        self.client: Engine = create_engine(connection_string)
+        self.client: Engine = create_engine(connection_string, **engine_kwargs)
 
     def connect(self) -> bool:
         try:
@@ -23,8 +21,8 @@ class SQL(Connectable):
 
     def query(self,
               template: str,
-              values: Dict[str, Any] | None = None,
-              request_options: Dict[str, Any] | None = None
+              values: dict | None = None,
+              request_options: dict | None = None
               ) -> CursorResult[Any]:
         return self.connection.execute(
             text(template),
@@ -41,7 +39,7 @@ class SQL(Connectable):
             dialect: str, domain: str,
             *,
             driver: str | None = None,
-            port: Union[str, int] | None,
+            port: str | int | None,
             username: str | None,
             password: str | None,
             name: str | None = None,
@@ -100,3 +98,7 @@ class SQL(Connectable):
             "options": options,
             "name": name
         }
+    def close(self):
+        super().close()
+        del self.connection
+        self.client.dispose()

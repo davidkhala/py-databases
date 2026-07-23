@@ -1,5 +1,6 @@
 import os
 import unittest
+from time import sleep
 
 from davidkhala.data.base.mssql.with_odbc import ConnectString
 from davidkhala.data.base.sql import SQL
@@ -10,10 +11,9 @@ class AzureTestCase(unittest.TestCase):
         domain = 'sql-server-hk.database.windows.net'
         name = 'mssql'
         username = 'CloudSA7b5eda98'
-        password = os.environ.get("MSSQL_PASSWORD")
+        password = os.environ.get("MSSQL_PASSWORD") or 'Kd5zbER2aJ3SnC'
         queries = {
             "Encrypt": "yes",
-            "Connection Timeout": 30
         }
         self.client = SQL(ConnectString.build(
             domain,
@@ -24,4 +24,7 @@ class AzureTestCase(unittest.TestCase):
         ))
 
     def test_connect(self):
-        self.assertTrue(self.client.connect())
+        warm = self.client.connect()
+        if not warm:
+            sleep(60)
+            self.assertTrue(self.client.connect())

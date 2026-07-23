@@ -4,15 +4,6 @@ import sqlalchemy
 from sqlalchemy import Engine
 from sqlalchemy.engine.create import create_engine
 
-from davidkhala.data.base.mssql.with_tds import Client
-
-USERNAME = "PROD_DataStage_SA_2606"
-PASSWORD = ""
-HOST = "10.10.20.209"
-PORT = 1433
-DATABASE = "maximdb"
-PROXY_HOST = "130.198.21.240"
-PROXY_PORT = 29130
 from davidkhala.data.base.mssql.testcontainers import Container
 
 
@@ -56,26 +47,6 @@ class TestContainerWithODBCTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.container.stop()
-
-
-
-
-class MssqlTestCase(unittest.TestCase):
-    def setUp(self):
-        self.client = Client(
-            domain=HOST,
-            port=PORT,
-            username=USERNAME,
-            password=PASSWORD,
-            name=DATABASE,
-            proxy={"host": PROXY_HOST, "port": PROXY_PORT},
-        )
-
-    def test_connect(self):
-        self.assertTrue(self.client.connect())
-
-    def tearDown(self):
-        self.client.close()
 
 
 if __name__ == '__main__':

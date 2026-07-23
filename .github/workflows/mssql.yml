@@ -13,4 +13,11 @@ jobs:
           extras: mssql
     env:
       MSSQL_PASSWORD: ${{secrets.MSSQL_PASSWORD}}
-
+  testcontainers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          test-entry-point: pytest sql/mssql/local_test.py
+          extras: mssql mssql-proxy

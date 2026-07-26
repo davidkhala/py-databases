@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import IntEnum
 from typing import Any, TypedDict
 
 import socks
@@ -11,18 +11,18 @@ from davidkhala.data.base.sql import SQL
 class ProxyConfigRequired(TypedDict):
     host: str
     port: int
+    type: int | ProxyType
 
 
-class ProxyType(Enum):
+class ProxyType(IntEnum):
     HTTP = socks.HTTP
     SOCKS5 = socks.SOCKS5
 
 
 class ProxyConfig(ProxyConfigRequired, total=False):
-    type: int | ProxyType
     username: str
     password: str
-    rdns: bool
+    rdns: bool  # False to use local(client-side) DNS
 
 
 class Client(SQL):
@@ -74,7 +74,7 @@ class Client(SQL):
         sock = socks.socksocket()
         try:
             sock.set_proxy(
-                proxy.get("type", socks.SOCKS5),
+                proxy["type"],
                 proxy["host"],
                 proxy["port"],
                 username=proxy.get("username"),

@@ -13,7 +13,7 @@ class DB2TestCase(unittest.TestCase):
         sql = SQL(self.container.get_connection_url())
         sql.connect()
         dba = DBA(sql)
-        self.assertEqual('DB2 v12.1.4.0', dba.version)
+        self.assertEqual('DB2 v12.1.5.0', dba.version)
 
     def tearDown(self):
         self.container.stop()

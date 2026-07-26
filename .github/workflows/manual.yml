@@ -1,0 +1,44 @@
+name: DBaaS
+on:
+  workflow_dispatch:
+
+jobs:
+  atlas:
+    runs-on: ubuntu-latest
+    environment: atlas
+    env:
+      ATLAS_PASSWORD: ${{secrets.ATLAS_PASSWORD}}
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          test-entry-point: pytest mongo/atlas_test.py
+          extras: mongo
+  capella-trial:
+    runs-on: ubuntu-latest
+    environment: capella-trial
+    env:
+      ADMINISTRATOR_PASSWORD: ${{secrets.ADMINISTRATOR_PASSWORD}}
+      API_SECRET: ${{secrets.API_SECRET}}
+    steps:
+      - uses: actions/checkout@main
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          test-entry-point: pytest couchbase
+          extras: couchbase
+  milvus:
+    runs-on: ubuntu-latest
+    environment: milvus
+    env:
+      CLUSTER_ENDPOINT: ${{vars.CLUSTER_ENDPOINT}}
+      CLUSTER_TOKEN: ${{secrets.CLUSTER_TOKEN}}
+    steps:
+      - uses: actions/checkout@main
+      - run: |
+          cd ${{ github.workspace }}/../
+          curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
+          bash standalone_embed.sh start
+      - uses: davidkhala/uv-buildpack@main
+        with:
+          test-entry-point: pytest milvus
+          extras: milvus

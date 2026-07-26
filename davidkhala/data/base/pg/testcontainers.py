@@ -1,5 +1,5 @@
 from testcontainers.postgres import PostgresContainer
-
+from testcontainers.core.wait_strategies import HealthcheckWaitStrategy
 
 class Container(PostgresContainer):
     def __init__(self, **kwargs):

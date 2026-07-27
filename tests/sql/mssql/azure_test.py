@@ -1,16 +1,13 @@
 import os
 import unittest
 from pathlib import Path
-from time import sleep
 
 import certifi
-
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_for_logs
 
-from davidkhala.data.base.mssql.with_odbc import ConnectString
+from davidkhala.data.base.mssql.with_odbc import ConnectString, ColdClient
 from davidkhala.data.base.mssql.with_tds import Client, ProxyConfig, ProxyType
-from davidkhala.data.base.sql import SQL
 
 
 class AzureTestCase(unittest.TestCase):
@@ -22,7 +19,7 @@ class AzureTestCase(unittest.TestCase):
         self.domain = 'sql-server-hk.database.windows.net'
         self.dbname = 'mssql'
         self.username = 'CloudSA7b5eda98'
-        self.client = SQL(ConnectString.build(
+        self.odbc_client = ColdClient(ConnectString.build(
             self.domain,
             username=self.username,
             password=self.password,
@@ -30,10 +27,8 @@ class AzureTestCase(unittest.TestCase):
             queries=queries
         ))
         # wait for warmup
-        warm = self.client.connect()
-        if not warm:
-            sleep(60)
-            self.assertTrue(self.client.connect())
+        self.odbc_client.connect()
+
 
     def test_proxy(self):
         # 1. Start a Squid proxy container with a custom config that allows

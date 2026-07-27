@@ -11,7 +11,7 @@ jobs:
       - uses: davidkhala/uv-buildpack@main
         with:
           test-entry-point: pytest sql/mssql/azure_test.py
-          extras: mssql
+          extras: mssql mssql-proxy
     env:
       MSSQL_PASSWORD: ${{secrets.MSSQL_PASSWORD}}
   testcontainers:

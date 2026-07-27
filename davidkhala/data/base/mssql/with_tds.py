@@ -35,6 +35,7 @@ class Client(SQL):
             proxy: ProxyConfig | None = None,
             port: int = 1433,
             name: str = "",
+            queries: dict | None = None,
             connect_kwargs: dict[str, Any] | None = None,
             **engine_kwargs,
     ):
@@ -61,6 +62,7 @@ class Client(SQL):
                     username=username,
                     password=password,
                     name=name,
+                    queries=queries
                 ),
                 **engine_kwargs,
             )

@@ -25,6 +25,7 @@ mssql-proxy = [
     "sqlalchemy",
     "PySocks",
     "sqlalchemy-pytds",
+    "pyOpenSSL"
 ]
 mongo = ["pymongo"]
 db2 = ["sqlalchemy", "ibm-db"]

@@ -1,7 +1,8 @@
 from typing import Any
 from urllib.parse import urlparse, parse_qs, quote, unquote
 
-from sqlalchemy import create_engine, text, Engine, CursorResult
+import pyodbc
+from sqlalchemy import create_engine, text, Engine, CursorResult,exc
 
 from davidkhala.data.base.__init__ import Connectable
 
@@ -16,8 +17,17 @@ class SQL(Connectable):
         try:
             self.connection = self.client.connect()
             return True
-        except Exception:
-            return False
+        except exc.InterfaceError as e:
+            if e.orig.args[0] == 'IM002':
+                print(e.orig.args[1])
+            else:
+                raise
+        except exc.OperationalError as e:
+            if e.orig.args[0] == '08001':
+                print(e.orig.args[1])
+            else:
+                raise
+        return False
 
     def query(self,
               template: str,

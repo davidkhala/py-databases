@@ -3,6 +3,8 @@ import unittest
 from pathlib import Path
 from time import sleep
 
+import certifi
+
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_for_logs
 
@@ -11,14 +13,13 @@ from davidkhala.data.base.mssql.with_tds import Client, ProxyConfig, ProxyType
 from davidkhala.data.base.sql import SQL
 
 
-
 class AzureTestCase(unittest.TestCase):
     def setUp(self):
         self.password = os.environ.get("MSSQL_PASSWORD")
         queries = {
             "Encrypt": "yes",
         }
-        self.domain= 'sql-server-hk.database.windows.net'
+        self.domain = 'sql-server-hk.database.windows.net'
         self.dbname = 'mssql'
         self.username = 'CloudSA7b5eda98'
         self.client = SQL(ConnectString.build(
@@ -63,5 +64,9 @@ class AzureTestCase(unittest.TestCase):
                 password=self.password,
                 name=self.dbname,
                 proxy=proxy_config,
+                connect_kwargs={
+                    "cafile": certifi.where(),
+                    "validate_host": False,
+                }
             )
             self.assertTrue(client.connect())

@@ -13,6 +13,14 @@ jobs:
           test-entry-point: python duckdb_test.py
           extras: duck
           groups: duck
+  sqlite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: astral-sh/setup-uv@main
+      - run: uv sync
+      - run: uv run pytest sqlite_test.py
+        working-directory: tests
   sql:
     strategy:
       matrix:

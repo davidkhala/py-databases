@@ -23,7 +23,7 @@ class TestContainerWithTDSTestCase(unittest.TestCase):
         )
         with engine.begin() as connection:
             result = connection.execute(sqlalchemy.text("SELECT SERVERPROPERTY('ProductVersion')"))
-            self.assertEqual("17.0.4065.4", result.scalar())
+            self.assertEqual("17.0.5005.3", result.scalar())
 
     def tearDown(self):
         self.container.stop()
@@ -43,7 +43,7 @@ class TestContainerWithODBCTestCase(unittest.TestCase):
         )
         with engine.begin() as connection:
             result = connection.execute(sqlalchemy.text("SELECT SERVERPROPERTY('ProductVersion')"))
-            self.assertEqual("17.0.4065.4", result.scalar())
+            self.assertEqual("17.0.5005.3", result.scalar())
 
     def tearDown(self):
         self.container.stop()
